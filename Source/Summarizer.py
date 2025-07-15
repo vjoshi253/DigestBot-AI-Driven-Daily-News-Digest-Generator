@@ -56,30 +56,45 @@ class Summarizer:
             )
             return ""
 
-    def run(self, max_length=1000, min_length=500) -> str:
+    def _get_summary_lengths(
+        self, text: str, max_cap: int = 250, min_floor: int = 30, ratio: float = 0.4
+    ) -> tuple:
         """
-        Generates a summary of the text content retrieved from the specified URL.
+        Calculates dynamic maximum and minimum summary lengths based on the input text and provided constraints.
 
         Args:
-            max_length (int, optional): The maximum length of the summary. Defaults to 1000.
-            min_length (int, optional): The minimum length of the summary. Defaults to 500.
+            text (str): The input text to be summarized.
+            max_cap (int, optional): The upper limit for the maximum summary length. Defaults to 150.
+            min_floor (int, optional): The lower limit for the minimum summary length. Defaults to 30.
+            ratio (float, optional): The ratio of the input text's word count to use for the maximum summary length.
+            Defaults to 0.3.
+
+        Returns:
+            tuple: A tuple (max_length, min_length) where:
+                - max_length (int): The calculated maximum summary length, constrained by `max_cap` and `ratio`.
+                - min_length (int): The calculated minimum summary length, constrained by `min_floor` and `max_length`.
+        """
+        word_count = len(text.split())
+        dynamic_max = int(word_count * ratio)
+
+        max_length = min(dynamic_max, max_cap)
+        min_length = (
+            min(min_floor, max_length - 1)
+            if max_length > min_floor
+            else int(0.6 * max_length)
+        )
+
+        return max_length, min_length
+
+    def run(self, content: str) -> str:
+        """
+        Generates a summary of the provided text content.
+
+        Args:
+            content (str): The content to be summarized.
 
         Returns:
             str: The summarized text if content is found; otherwise, an empty string.
         """
-        scraper = Scraper(self.url)
-        text = scraper.run()
-        if not text:
-            return ""
-        return self._summarize(text, max_length, min_length)
-
-
-if __name__ == "__main__":
-    url = "https://www.utsa.edu/today/2025/07/story/AI-for-everyone-camp.html"
-    summarizer = Summarizer(url)
-    summary = summarizer.run()
-    if summary:
-        print("Summary:")
-        print(summary)
-    else:
-        print("Failed to generate summary.")
+        max_length, min_length = self._get_summary_lengths(content)
+        return self._summarize(content, max_length, min_length)

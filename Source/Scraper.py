@@ -1,6 +1,7 @@
 import logging
 import requests
 from bs4 import BeautifulSoup
+from readability import Document
 import log_config  # Ensure logging is configured
 
 logger = logging.getLogger(__name__)
@@ -41,26 +42,56 @@ class Scraper:
             str: The extracted visible text, or an empty string if parsing fails.
         """
         try:
+            doc = Document(html)
+            html = doc.summary()
             soup = BeautifulSoup(html, "html.parser")
             for tag in soup(["script", "style"]):
                 tag.decompose()
             visible_text = soup.get_text(separator=" ", strip=True)
-            logger.info(f"Page parsed successfully: {self.url}")
+            logger.info(f"Page content parsed successfully: {self.url}")
             return visible_text
         except Exception as e:
             logging.error(f"Error parsing HTML from {self.url}: {e}")
             return ""
 
-    def run(self) -> str:
+    def _extract_title(self, html: str) -> str:
         """
-        Runs the scraper to fetch and extract visible text from the URL.
+        Extracts and returns the title from the provided HTML string.
+
+        Args:
+            html (str): The HTML content as a string.
 
         Returns:
-            str: The extracted visible text from the page, or an empty string if fetching or parsing fails.
+            str: The page title, or an empty string if not found or on error.
         """
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+            title_tag = soup.find("title")
+            title = title_tag.get_text(strip=True) if title_tag else ""
+            logger.info(f"Page title parsed successfully: {self.url}")
+            return title
+        except Exception as e:
+            logger.error(f"Error extracting title from {self.url}: {e}")
+        return ""
+
+    def run(self) -> dict:
+        """
+        Runs the scraper to fetch and extract the title and visible text content from the URL.
+
+        Returns:
+            dict: A dictionary containing 'title' and 'content' keys. If fetching or parsing
+            fails, values will be empty strings.
+        """
+
         logger.info(f"Starting scraper for URL: {self.url}")
         html = self._fetch_html()
         if not html:
-            return ""
-        body_text = self._extract_text(html)
-        return body_text
+            return {"title": "", "content": ""}
+
+        title = self._extract_title(html)
+        content = self._extract_text(html)
+
+        return {
+            "title": title,
+            "content": content,
+        }

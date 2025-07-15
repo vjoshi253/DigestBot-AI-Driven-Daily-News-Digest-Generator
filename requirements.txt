@@ -3,4 +3,4 @@ transformers
 torch
 langchain-huggingface
 beautifulsoup4
-
+readability-lxml

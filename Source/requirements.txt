@@ -1,6 +1,0 @@
-requests
-transformers
-torch
-langchain-huggingface
-beautifulsoup4
-

@@ -1,6 +1,6 @@
 import logging
 import torch
-import log_config  # Ensure logging is configured
+from newsbot import log_config  # Ensure logging is configured
 
 logger = logging.getLogger(__name__)
 

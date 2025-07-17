@@ -1,8 +1,7 @@
 import logging
-from Scraper import Scraper
 from transformers import pipeline
-from device_config import DeviceManager
-import log_config  # Ensure logging is configured
+from newsbot.device_config import DeviceManager
+from newsbot import log_config  # Ensure logging is configured
 
 
 logger = logging.getLogger(__name__)

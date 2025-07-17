@@ -1,6 +1,11 @@
-from Summarizer import Summarizer
-from ArticleEvaluator import ArticleEvaluator
-from Scraper import Scraper
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent / "src"))
+
+from newsbot.Scraper import Scraper
+from newsbot.Summarizer import Summarizer
+from newsbot.ArticleEvaluator import ArticleEvaluator
 
 if __name__ == "__main__":
     url = "https://www.utsa.edu/today/2025/07/story/AI-for-everyone-camp.html"

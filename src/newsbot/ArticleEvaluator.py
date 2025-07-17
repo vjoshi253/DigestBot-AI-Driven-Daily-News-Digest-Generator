@@ -2,8 +2,8 @@ import re
 import logging
 from typing import Union
 from transformers import pipeline
-from device_config import DeviceManager
-import log_config  # Ensure logging is configured
+from newsbot.device_config import DeviceManager
+from newsbot import log_config  # Ensure logging is configured
 
 
 logger = logging.getLogger(__name__)
@@ -11,14 +11,15 @@ logger = logging.getLogger(__name__)
 
 class ArticleEvaluator:
     """
-    ArticleEvaluator is a class designed to evaluate news articles using a language model, providing a numerical rating based on user-specific criteria.
+    ArticleEvaluator is a class designed to evaluate news articles using a language model,
+    providing a numerical rating based on user-specific criteria.
 
     Attributes:
         model_name (str): The name or path of the language model to use for evaluation.
         model: The instantiated text-generation pipeline for generating article ratings.
     """
 
-    def __init__(self, model_name: str = "meta-llama/Meta-Llama-3-8B"):
+    def __init__(self, model_name: str = "HuggingFaceTB/SmolLM3-3B"):
         self.model_name = model_name
         self.model = pipeline(
             "text-generation",

@@ -2,7 +2,7 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 from readability import Document
-import log_config  # Ensure logging is configured
+from newsbot import log_config  # Ensure logging is configured
 
 logger = logging.getLogger(__name__)
 
